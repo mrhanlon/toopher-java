@@ -46,6 +46,8 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
+          <finalName>ToopherJavaDemo</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
