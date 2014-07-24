@@ -1,4 +1,4 @@
 ### /Users/egrim/.gitignore-boilerplates/Java.gitignore
 
 *.class
-
+target/
