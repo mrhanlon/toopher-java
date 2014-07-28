@@ -145,6 +145,40 @@ public class ToopherAPI {
             throw new RequestError(e);
         }
     }
+    
+    /**
+     * Create a pairing for SMS
+     * 
+     * @param phoneNumber
+     *            The phone number for the user
+     * @param userName
+     *            A user-facing descriptive name for the user (displayed in requests)
+     * @return A PairingStatus object
+     * @throws RequestError
+     *            Thrown when a exceptional condition is encountered
+     */
+    public PairingStatus pairSMS(String phoneNumber, String userName) throws RequestError {
+        return this.pairSMS(phoneNumber, userName, null, null);
+    }
+    
+    public PairingStatus pairSMS(String phoneNumber, String userName, String phoneCountry, Map<String, String> extras) throws RequestError {
+        final String endpoint = "pairings/create/sms";
+        
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("phone_number", phoneNumber));
+        params.add(new BasicNameValuePair("user_name", userName));
+        
+        if (phoneCountry != null) {
+            params.add(new BasicNameValuePair("phone_country", phoneCountry));
+        }
+
+        try {
+            JSONObject json = post(endpoint, params, extras);
+            return new PairingStatus(json);
+        } catch (Exception e) {
+            throw new RequestError(e);
+        }
+    }
 
     /**
      * Retrieve the current status of a pairing request

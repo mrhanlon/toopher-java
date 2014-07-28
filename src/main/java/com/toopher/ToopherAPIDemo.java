@@ -23,6 +23,7 @@ public class ToopherAPIDemo {
         if(env.containsKey("TOOPHER_BASE_URL")){
         	try {
 				base_uri = new URI(env.get("TOOPHER_BASE_URL"));
+				System.out.println("Using Toopher API at: " + env.get("TOOPHER_BASE_URL"));
 			} catch (URISyntaxException e) {
 				System.out.println("Error parsing environment arg TOOPHER_BASE_URL!  Using default (https://api.toopher.com/v1/)");
 				base_uri = null;
@@ -45,23 +46,52 @@ public class ToopherAPIDemo {
 			api = new ToopherAPI (consumerKey, consumerSecret, base_uri);
         }
         
+        boolean pairSMS = false;
+        while (true) {
+            System.out.println("Step 0: Would you like to pair via SMS or using the Toopher App?");
+            System.out.println("--------------------------------------");
+            System.out.print("Enter \"sms\" to use SMS (default is \"app\"): ");
+            String response = in.nextLine();
+            
+            if (response.trim().equalsIgnoreCase("sms")) {
+                pairSMS = true;
+            }
+            
+            break;
+        }
+        
 		String pairingId;
 		while (true) {
-			String pairingPhrase;
-			while (true) {
-				System.out.println("Step 1: Pair requester with phone");
-				System.out.println("--------------------------------------");
-				System.out.println("Pairing phrases are generated on the mobile app");
-				System.out.print("Enter pairing phrase: ");
-				pairingPhrase = in.nextLine();
-
-				if (pairingPhrase.length() == 0) {
-					System.out.println("Please enter a pairing phrase to continue");
-				} else {
-					break;
-				}
-			}
-
+		    String pairingPhrase;
+		    if (pairSMS) {
+                while (true) {
+                    System.out.println("Step 1: Pair requester with phone");
+                    System.out.println("--------------------------------------");
+                    System.out.print("Enter your 10-digit Mobile Phone number (no punctuation):");
+                    pairingPhrase = in.nextLine();
+    
+                    if (!pairingPhrase.matches("\\d{10}")) {
+                        System.out.println("Please enter a valid phone number to continue");
+                    } else {
+                        break;
+                    }
+                }
+		    } else {
+    			while (true) {
+    				System.out.println("Step 1: Pair requester with phone");
+    				System.out.println("--------------------------------------");
+    				System.out.println("Pairing phrases are generated on the mobile app");
+    				System.out.print("Enter pairing phrase: ");
+    				pairingPhrase = in.nextLine();
+    
+    				if (pairingPhrase.length() == 0) {
+    					System.out.println("Please enter a pairing phrase to continue");
+    				} else {
+    					break;
+    				}
+    			}
+		    }
+		    
 			System.out.print(String.format("Enter a username for this pairing [%s]: ", DEFAULT_USERNAME));
 			String userName = in.nextLine();
 			if (userName.length() == 0) {
@@ -71,11 +101,17 @@ public class ToopherAPIDemo {
 			System.out.println("Sending pairing request...");
 
 			try {
-				PairingStatus pairingStatus = api.pair(pairingPhrase, userName);
+				PairingStatus pairingStatus;
+				if (pairSMS) {
+                    pairingStatus = api.pairSMS(pairingPhrase, userName);
+				} else {
+				    pairingStatus = api.pair(pairingPhrase, userName);
+				}
 				pairingId = pairingStatus.id;
 				break;
 			} catch (RequestError err) {
 				System.out.println(String.format("The pairing phrase was not accepted (reason:%s)", err.getMessage()));
+				err.printStackTrace();
 			}
 		}
 
