@@ -23,7 +23,9 @@ public class ToopherAPIDemo {
         if(env.containsKey("TOOPHER_BASE_URL")){
         	try {
 				base_uri = new URI(env.get("TOOPHER_BASE_URL"));
+				System.out.println("\n--------------------------------------");
 				System.out.println("Using Toopher API at: " + env.get("TOOPHER_BASE_URL"));
+				System.out.println("--------------------------------------\n");
 			} catch (URISyntaxException e) {
 				System.out.println("Error parsing environment arg TOOPHER_BASE_URL!  Using default (https://api.toopher.com/v1/)");
 				base_uri = null;
