@@ -147,6 +147,37 @@ public class ToopherAPI {
     }
     
     /**
+     * 
+     * @param userName
+     * @return
+     * @throws RequestError
+     */
+    public PairingStatus pairQR(String userName) throws RequestError {
+        return this.pairQR(userName, null);
+    }
+    
+    /**
+     * 
+     * @param userName
+     * @param extras
+     * @return
+     * @throws RequestError
+     */
+    public PairingStatus pairQR(String userName, Map<String, String> extras) throws RequestError {
+        final String endpoint = "pairings/create/qr";
+      
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("user_name", userName));
+      
+        try {
+            JSONObject json = post(endpoint, params, extras);
+            return new PairingStatus(json);
+        } catch (Exception e) {
+            throw new RequestError(e);
+        }
+    }
+    
+    /**
      * Create a pairing for SMS
      * 
      * @param phoneNumber
